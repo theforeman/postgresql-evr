@@ -17,3 +17,11 @@ jobs:
         with:
           file: Containerfile
           tags: postgresql-evr:latest
+      - name: Run container
+        run: docker run -p 5432:5432 -e POSTGRES_PASSWORD=password --detach --name postgres postgresql-evr:latest
+      - name: Wait for the container to start up
+        run: 'while ! docker exec postgres pg_isready; do sleep 1; done'
+      - name: Create extension in the container
+        run: psql --host localhost --username postgres --command 'create extension evr;'
+        env:
+          PGPASSWORD: password
