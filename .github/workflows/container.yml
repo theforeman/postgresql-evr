@@ -15,7 +15,7 @@ jobs:
       - name: Build container
         uses: docker/build-push-action@v5
         with:
-          file: Containerfile
+          file: Dockerfile
           tags: postgresql-evr:latest
       - name: Run container
         run: docker run -p 5432:5432 -e POSTGRES_PASSWORD=password --detach --name postgres postgresql-evr:latest
