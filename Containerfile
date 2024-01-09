@@ -1,4 +1,5 @@
-FROM postgres:12
+ARG POSTGRESQL_VERSION=12
+FROM postgres:${POSTGRESQL_VERSION}
 
 COPY Makefile *.control *.sql /src/
 
