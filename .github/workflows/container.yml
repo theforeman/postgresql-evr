@@ -10,15 +10,24 @@ permissions:
 jobs:
   container:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        postgresql:
+          - 12
+          - 13
+          - 15
     steps:
       - uses: actions/checkout@v4
       - name: Build container
         uses: docker/build-push-action@v5
         with:
           file: Containerfile
-          tags: postgresql-evr:latest
+          tags: postgresql-evr:${{ matrix.postgresql }}
+          build-args: |
+            POSTGRESQL_VERSION=${{ matrix.postgresql }}
       - name: Run container
-        run: docker run -p 5432:5432 -e POSTGRES_PASSWORD=password --detach --name postgres postgresql-evr:latest
+        run: docker run -p 5432:5432 -e POSTGRES_PASSWORD=password --detach --name postgres postgresql-evr:${{ matrix.postgresql }}
       - name: Wait for the container to start up
         run: 'while ! docker exec postgres pg_isready; do sleep 1; done'
       - name: Create extension in the container
